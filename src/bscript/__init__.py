@@ -1,9 +1,8 @@
 from functools import wraps as _wraps
 from dataclasses import dataclass as _dataclass
-import inspect
 
 from .bscript_context import context, bScriptContext
-from .handler import Transition, initial_state, Restart
+from .handler import Transition, PendingTransition, initial_state, Restart
 
 def trace(f):
     @_wraps(f)

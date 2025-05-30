@@ -21,7 +21,22 @@ def retained_choice(choices):
         yield choice
 
 @bscript.fsm
-class toggleFSM:
+class toggle_fsm:
+    # parameter with type annotations!
+    on: int = 1
+    off: int = 0
+
+    @bscript.initial_state
+    def off_state(self):
+        return bscript.PendingTransition(return_value=self.off,
+                                         next_state=self.on_state)
+
+    def on_state(self):
+        return bscript.PendingTransition(return_value=self.on,
+                                         next_state=self.off_state)
+
+@bscript.fsm
+class toggle_fsm2:
     # parameter with type annotations!
     on: int = 1
     off: int = 0
@@ -33,7 +48,7 @@ class toggleFSM:
     def off_state(self):
         # decision
         if self.last_state == self.off_state:
-            raise bscript.Transition(self.on_state)
+            return bscript.Transition(self.on_state)
 
         # action
         self.last_state = self.off_state
@@ -42,7 +57,7 @@ class toggleFSM:
     def on_state(self):
         # decision
         if self.last_state == self.on_state:
-            raise bscript.Transition(self.off_state)
+            return bscript.Transition(self.off_state)
 
         # action
         self.last_state = self.on_state

@@ -5,6 +5,11 @@ class Transition(BaseException):
     def __init__(self, next_state):
         self.next = next_state
 
+class PendingTransition(BaseException):
+    def __init__(self, return_value, next_state):
+        self.return_value = return_value
+        self.next = next_state
+
 class Restart(BaseException): pass
 
 class NoInitialStateFound(BaseException): pass
@@ -52,8 +57,15 @@ class FSMHandler:
         for k, v in bound_kwargs.items():
             setattr(self.fsm, k, v)
 
-        try:
-            return self.state()
-        except Transition as next_state:
-            self.state = next_state.next
-            return self.call(bound_kwargs)
+        res = self.state()
+        match res:
+            case Transition():
+                self.state = res.next
+                return self.call(bound_kwargs)
+            case PendingTransition():
+                self.state = res.next
+                return res.return_value
+            case Restart():
+                raise res
+            case _:
+                return res

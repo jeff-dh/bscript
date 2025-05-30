@@ -39,7 +39,15 @@ regular functions and whose parameters (might) change from call to call. These
 "_state based functions_" can be used to describe hierarchical agent / robot
 behaviors.
 
-### a task toggle example
+## Installation
+
+```console
+pip install bscript@git+https://github.com/jeff-dh/bscript
+```
+
+## Examples
+
+### toggle task
 
 ```python
 >>> import bscript
@@ -59,15 +67,7 @@ behaviors.
 1
 ```
 
-## Installation
-
-```console
-pip install bscript@git+https://github.com/jeff-dh/bscript
-```
-
-## Examples
-
-### retained choice
+### retained choice task
 
 a basic decision task
 
@@ -97,7 +97,7 @@ a basic decision task
 4
 ```
 
-### statemachines
+### state machines
 
 a finite state machine that toggles between two states
 
@@ -117,7 +117,7 @@ a finite state machine that toggles between two states
 ...     def off_state(self):
 ...         # decision
 ...         if self.last_state == self.off_state:
-...             raise bscript.Transition(self.on_state)
+...             return bscript.Transition(self.on_state)
 ...
 ...         # action
 ...         self.last_state = self.off_state
@@ -126,7 +126,7 @@ a finite state machine that toggles between two states
 ...     def on_state(self):
 ...         # decision
 ...         if self.last_state == self.on_state:
-...             raise bscript.Transition(self.off_state)
+...             return bscript.Transition(self.off_state)
 ...
 ...         # action
 ...         self.last_state = self.on_state
@@ -140,6 +140,34 @@ a finite state machine that toggles between two states
 0
 >>> toggleFSM("on", "off")
 'on'
+```
+
+#### pending transitions
+
+```python
+>>> import bscript
+>>>
+>>> @bscript.fsm
+... class toggle_fsm:
+...     # parameter with type annotations!
+...     on: int = 1
+...     off: int = 0
+...
+...     @bscript.initial_state
+...     def off_state(self):
+...         return bscript.PendingTransition(return_value=self.off,
+...                                          next_state=self.on_state)
+...
+...     def on_state(self):
+...         return bscript.PendingTransition(return_value=self.on,
+...                                          next_state=self.off_state)
+...
+>>> toggle_fsm()
+0
+>>> toggle_fsm()
+1
+>>> toggle_fsm()
+0
 ```
 
 ### hierarchical behaviors
