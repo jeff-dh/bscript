@@ -12,7 +12,6 @@ def initial_state(f):
 
 class Statemachine:
     state = None
-    last_state = None
 
     def _get_initial_state(self):
         for attr_name in self.__dir__():
@@ -29,10 +28,7 @@ class Statemachine:
             self.state = self._get_initial_state()
 
         try:
-            res = self.state()
-            self.last_state = self.state
-            return res
+            return self.state()
         except Transition as next_state:
-            self.last_state = self.state
             self.state = next_state.next
             return next(self)
