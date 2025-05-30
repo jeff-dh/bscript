@@ -19,9 +19,10 @@ Only works with `python>=3.13`.
 The core of bscript are so called _tasks_. These _tasks_ are generators which can be called like functions. This is achieve by using an implicit context management for the generators / _tasks_.
 
 _task_ differ from generators in these details:
-    - implicit context management (kind of singletons, like functions)
-    - parameters are manipulated and get updated at each call (not only at the creation of the generator context)
-    - the generators are restartet imediately if a `StopIteration` occurs
+
+- implicit context management (kind of singletons, like functions)
+- parameters are manipulated and get updated at each call (not only at the creation of the generator context)
+- the generators are restartet imediately if a `StopIteration` occurs
 
 The result are "generators" which can be called like regular functions and whose parameters (might) change from call to call.
 These "_state based functions_" can be used to descibe agent / robot behaviors. Because they maintain a state from previous calls, "_tasks_" can be used similar to (or in combination with) hierachical finite state machines.
