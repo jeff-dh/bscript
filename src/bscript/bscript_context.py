@@ -32,8 +32,8 @@ class bScriptContext:
                 setattr(state, k, v)
 
         # call next on state
+        self.tracer.trace_call(func_or_fsm, *args, **kwargs)
         with self.tracer:
-            self.tracer.trace_call(func_or_fsm, *args, **kwargs)
             try:
                 return next(state)
             except StopIteration:

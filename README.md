@@ -286,21 +286,21 @@ for debugging purpose `bscript` includes a tracer:
 
 ```python
 >>> import bscript
+>>>
 >>> @bscript.trace
 ... def foo(a, b, c):
-...     pass
+...     bscript.trace_message("inside foo")
 ...
->>> @bscript.trace
+>>> @bscript.task
 ... def bar(a, b, c):
-...     foo(a*2, b*2, c*2)
+...     yield foo(2*a, 2*b, 2*c)
 ...
 >>> bar(1, 2, 3)
->>>
 >>> ctx = bscript.context()
->>> print(ctx.tracer.__str__())
--- trace --
-    bar(a=1, b=2, c=3)
-        foo(a=2, b=4, c=6)
+>>> print(ctx.tracer.format())
+bar(a=1, b=2, c=3)
+    foo(a=2, b=4, c=6)
+        inside foo
 ```
 
 the `task` and `fsm` decorators include a call to `bscript.trace`.

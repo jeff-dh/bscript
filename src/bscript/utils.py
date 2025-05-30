@@ -10,7 +10,6 @@ class Tracer:
     def __init__(self):
         self.indent = 0
         self.lines = []
-        self.trace_message("-- trace --")
 
     def __enter__(self):
         self.indent += 1
@@ -28,10 +27,9 @@ class Tracer:
 
     def clear(self):
         self.lines = []
-        self.trace_message("-- trace --")
         assert self.indent == 0
 
-    def __str__(self):
+    def format(self):
         return "\n".join(self.lines)
 
 def get_var_from_parent_frames(name):

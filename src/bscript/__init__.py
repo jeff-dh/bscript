@@ -6,8 +6,8 @@ from .statemachine import Statemachine
 def trace(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
+        context().tracer.trace_call(f, *args, **kwargs)
         with context().tracer:
-            context().tracer.trace_call(f, *args, **kwargs)
             return f(*args, **kwargs)
     return wrapper
 
