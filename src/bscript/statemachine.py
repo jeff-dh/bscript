@@ -7,9 +7,6 @@ class Statemachine:
     state = None
     last_state = None
 
-    def transition(self, state):
-        return Transition(state)
-
     def __next__(self):
         if self.state is None:
             assert self.initial_state is not None

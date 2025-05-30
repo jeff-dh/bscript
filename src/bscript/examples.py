@@ -39,14 +39,14 @@ class toggleFSM(bscript.Statemachine):
     def off_state(self):
         # decision
         if self.last_state == self.state:
-            raise self.transition(self.on_state)
+            raise bscript.Transition(self.on_state)
         # action
         return self.off
 
     def on_state(self):
         # decision
         if self.last_state == self.state:
-            raise self.transition(self.off_state)
+            raise bscript.Transition(self.off_state)
         # action
         return self.on
 
