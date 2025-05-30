@@ -21,7 +21,7 @@ def retained_choice(choices):
         yield choice
 
 @bscript.fsm
-class toggleFSM(bscript.Statemachine):
+class toggleFSM:
     # parameter with type annotations!
     on: int = 1
     off: int = 0

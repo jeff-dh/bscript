@@ -1,3 +1,4 @@
+from contextlib import contextmanager
 from textwrap import indent
 from inspect import currentframe, signature
 
@@ -11,19 +12,18 @@ class Tracer:
         self.indent = 0
         self.lines = []
 
-    def __enter__(self):
-        self.indent += 1
-
-    def __exit__(self, _exc_type, _exc_val, _exc_tb):
-        self.indent -= 1
-
     def trace_message(self, msg):
         self.lines.append(indent(msg, " " * self.indent * 4))
 
+    @contextmanager
     def trace_call(self, f, *args, **kwargs):
         bound_kwargs = get_bound_arguments(f, *args, **kwargs)
         f_args = ", ".join(f"{k}={v}" for k, v in bound_kwargs.items())
         self.trace_message(f"{f.__name__}({f_args})")
+
+        self.indent += 1
+        yield
+        self.indent -= 1
 
     def clear(self):
         self.lines = []

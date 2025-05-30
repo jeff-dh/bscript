@@ -1,8 +1,12 @@
-from typing import Any, Generator
+import inspect
+from typing import Any
+from undecorated import undecorated
 
 from .utils import get_var_from_parent_frames,\
                    get_bound_arguments,\
                    Tracer
+
+from .handler import FSMHandler, TaskHandler, Restart
 
 class bScriptContext:
     def __init__(self):
@@ -14,52 +18,40 @@ class bScriptContext:
 
         self.tracer = Tracer()
 
-    def _call_from_wrapper(self, func_or_fsm, *args, **kwargs):
-        # mark as active
+    def _call(self, func_or_fsm, *args, **kwargs):
         self._active_states.add(func_or_fsm)
-
-        # create state if not in self._states
-        if not func_or_fsm in self._states:
-            self._states[func_or_fsm] = func_or_fsm(*args, **kwargs)
-        # restart if generator is in failure state (frame == None)
-        if hasattr(self._states[func_or_fsm], "gi_frame"):
-            if self._states[func_or_fsm].gi_frame is None:
-                self._states[func_or_fsm] = func_or_fsm(*args, **kwargs)
-
-        state = self._states[func_or_fsm]
-
-        # bind parameters into frames / fsm
         bound_kwargs = get_bound_arguments(func_or_fsm, *args, **kwargs)
-        for k, v in bound_kwargs.items():
-            if isinstance(state, Generator):
-                state.gi_frame.f_locals[k] = v
-            else:
-                setattr(state, k, v)
 
-        # call next on state
-        self.tracer.trace_call(func_or_fsm, *args, **kwargs)
-        with self.tracer:
+        Handler = TaskHandler if not inspect.isclass(func_or_fsm) else FSMHandler
+
+        if not func_or_fsm in self._states:
+            self._states[func_or_fsm] = Handler(func_or_fsm(*args, **kwargs))
+        handler = self._states[func_or_fsm]
+
+        with self.tracer.trace_call(func_or_fsm, *args, **kwargs):
             try:
-                return next(state)
-            except StopIteration:
-                del self._states[func_or_fsm]
-                return self._call_from_wrapper(func_or_fsm, *args, **kwargs)
+                return handler.call(bound_kwargs)
+            except Restart:
+                self.reset_state(func_or_fsm)
+                return self._call(func_or_fsm, *args, **kwargs)
 
     def reset_inactive_states(self):
         self._states = {k:v for k, v in self._states.items()
                         if k in self._active_states}
         self._active_states.clear()
 
-    def call(self, f, *args, **kwargs):
+    def execute(self, f, *args, **kwargs):
+        # this sets the context which gets fetch from this frame
+        # -> context()
         _bscript_context = self
         _bscript_context = _bscript_context # avoid unused
 
         return f(*args, **kwargs)
 
-    def frame(self, root_skill, *args, **kwargs):
-        self.reset_inactive_states()
-        self.tracer.clear()
-        self.call(root_skill, *args, **kwargs)
+    def reset_state(self, func_or_fsm):
+        f = undecorated(func_or_fsm)
+        if f in self._states:
+            del self._states[f]
 
 _defaultContext = bScriptContext()
 

@@ -1,26 +1,26 @@
-from functools import wraps
-from dataclasses import dataclass
+from functools import wraps as _wraps
+from dataclasses import dataclass as _dataclass
+import inspect
 
 from .bscript_context import context, bScriptContext
-from .statemachine import Statemachine, Transition, initial_state
+from .handler import Transition, initial_state, Restart
 
 def trace(f):
-    @wraps(f)
+    @_wraps(f)
     def wrapper(*args, **kwargs):
-        context().tracer.trace_call(f, *args, **kwargs)
-        with context().tracer:
+        with context().tracer.trace_call(f, *args, **kwargs):
             return f(*args, **kwargs)
     return wrapper
 
 def trace_message(msg): context().tracer.trace_message(msg)
 
 def _managed_context(f):
-    @wraps(f)
+    @_wraps(f)
     def wrapper(*args, **kwargs):
-        return context()._call_from_wrapper(f, *args, **kwargs)
+        return context()._call(f, *args, **kwargs)
     return wrapper
 
-def fsm(cls): return _managed_context(dataclass(cls))
+def fsm(cls): return _managed_context(_dataclass(cls))
 def task(f): return _managed_context(f)
 def input(): return context().input
 def output(): return context().output
