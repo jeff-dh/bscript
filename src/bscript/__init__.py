@@ -1,7 +1,7 @@
 from functools import wraps
 
 from .bscript_context import context, bScriptContext
-from .statemachine import Statemachine, Transition
+from .statemachine import Statemachine, Transition, initial_state
 
 def trace(f):
     @wraps(f)

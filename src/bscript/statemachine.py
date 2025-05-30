@@ -1,16 +1,32 @@
+import inspect
+
 class Transition(BaseException):
     def __init__(self, next_state):
         self.next = next_state
 
+class NoInitialStateFound(BaseException): pass
+
+def initial_state(f):
+    f._bscript_initial_state = True
+    return f
+
 class Statemachine:
-    initial_state = None
     state = None
     last_state = None
 
+    def _get_initial_state(self):
+        for attr_name in self.__dir__():
+            attr = getattr(self, attr_name)
+
+            if inspect.ismethod(attr):
+                if hasattr(attr, "_bscript_initial_state"):
+                    return attr
+
+        raise NoInitialStateFound(self.__class__.__name__)
+
     def __next__(self):
         if self.state is None:
-            assert self.initial_state is not None
-            self.state = self.initial_state
+            self.state = self._get_initial_state()
 
         try:
             res = self.state()
