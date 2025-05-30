@@ -16,18 +16,30 @@
 
 Only works with `python>=3.13`.
 
-The core of bscript are so called _tasks_. These _tasks_ are generators which can be called like functions. This is achieve by using an implicit context management for the generators / _tasks_.
+`bscript` is a behavior specification library for agents respectively robots.
+It is similar to other hierarchical finite state machine approaches, but
+extends the hierarchy with (python) generators (called _tasks_). `bscript`
+tries to enable a scripting like approach to behavior engineering in contrast
+to restricted finite state machines solutions.
 
-_task_ differ from generators in these details:
+_Tasks_ -- as well as state machines -- can be called like regular functions.
+This is achieve by using an implicit context management for the _tasks_ and
+state machines.
+
+_Tasks_ and state machines have the following (additional) properties:
 
 - implicit context management (kind of singletons, like functions)
-- parameters are manipulated and get updated at each call (not only at the creation of the generator context)
-- the generators are restartet imediately if a `StopIteration` occurs
+- parameters are manipulated and get updated at each call (not only at the
+  creation of the generator context)
+- the generators are restartet imediately if a `StopIteration` occurs (or a
+  `bscript.Restart()` exceptoin was thrown)
 
-The result are "generators" which can be called like regular functions and whose parameters (might) change from call to call.
-These "_state based functions_" can be used to descibe agent / robot behaviors. Because they maintain a state from previous calls, "_tasks_" can be used similar to (or in combination with) hierachical finite state machines.
+The result are generators (_tasks_) and state machines which can be called like
+regular functions and whose parameters (might) change from call to call. These
+"_state based functions_" can be used to describe hierarchical agent / robot
+behaviors.
 
-### toggle example
+### a task toggle example
 
 ```python
 >>> import bscript
@@ -57,6 +69,8 @@ pip install bscript@git+https://github.com/jeff-dh/bscript
 
 ### retained choice
 
+a basic decision task
+
  ```python
 >>> import random
 >>> import bscript
@@ -85,51 +99,77 @@ pip install bscript@git+https://github.com/jeff-dh/bscript
 
 ### statemachines
 
-a proof of concept state machine integration is included:
+a finite state machine that toggles between two states
 
 ```python
->>> import bscript
+>> import bscript
 >>>
 >>> @bscript.fsm
-... class toggleFSM(bscript.Statemachine):
-...     def __init__(self, on=1, off=0):
-...         # called once (and after restart)
-...         self.on = on
-...         self.off = off
-...         # self.on and self.off (btw: must match __init__ parameters) get
-...         # updated on every call
+... class toggleFSM:
+...     # parameter with type annotations!
+...     on: int = 1
+...     off: int = 0
 ...
+...     # internal state(s) without type annotations
+...     last_state = None
+...
+...     @bscript.initial_state
 ...     def off_state(self):
 ...         # decision
-...         if self.last_state == self.state:
+...         if self.last_state == self.off_state:
 ...             raise bscript.Transition(self.on_state)
+...
 ...         # action
+...         self.last_state = self.off_state
 ...         return self.off
 ...
 ...     def on_state(self):
 ...         # decision
-...         if self.last_state == self.state:
+...         if self.last_state == self.on_state:
 ...             raise bscript.Transition(self.off_state)
-...         # action
-...         return self.on
 ...
-...     initial_state = off_state
+...         # action
+...         self.last_state = self.on_state
+...         return self.on
 ...
 >>> toggleFSM()
 0
 >>> toggleFSM()
 1
->>> toggleFSM("on", "off")
-'off'
 >>> toggleFSM()
-1
+0
+>>> toggleFSM("on", "off")
+'on'
 ```
 
-### hierachical behaviors
+### hierarchical behaviors
 
-_tasks_, finite state machines and regular functions can be arbitrarily
-mixed to hierachical behaviors. All three can be called likes functions and can
+_tasks_, finite state machines and regular functions can be arbitrarily mixed
+to complex hierarchical behaviors. All three can be called likes functions and can
 return values, raise exceptions, execute arbitrary code.....
+
+```python
+>>> import bscript
+>>>
+>>> @bscript.fsm
+... class fsm_behavior:
+...     @bscript.initial_state
+...     def blub(self):
+...         print("fsm behavior")
+...
+>>> def func_behavior():
+...     print("stateless behavior")
+...
+>>> @bscript.task
+... def root_behavior():
+...     yield func_behavior()
+...     yield fsm_behavior()
+...
+>>> root_behavior()
+stateless behavior
+>>> root_behavior()
+fsm behavior
+```
 
 ### implicit context
 
@@ -182,13 +222,34 @@ global `input` (world model) and `output` (action selection) are available throu
 {'double': 10}
 ```
 
-### restarting inactive tasks
+### manual resting states
 
-as other behavior speicification languages (i.e. xabsl / cabsl) bscript can
-restart "inactive" _tasks_ (and state machines) with
-`context.reset_inactive_states()`. A _task_ (or state machine) is considered
-inactive if it was not called since the last call to `reset_inactive_states`
-(or since the start of the program).
+```python
+>>> import bscript
+>>>
+>>> @bscript.task
+... def counter():
+...     for i in range(99):
+...         yield i
+...
+>>> ctx = bscript.context()
+>>>
+>>> counter()
+0
+>>> counter()
+1
+>>> ctx.reset_state(counter)
+>>> counter()
+0
+```
+
+### reseting inactivity states
+
+as other behavior speicification languages bscript can reset
+"inactive" _tasks_ (and state machines) with
+`context.reset_inactive_states()`. A _task_ (or state machine) is
+considered inactive if it was not called since the last call to
+`reset_inactive_states` (or since the start of the program).
 
 ```python
 >>> import bscript

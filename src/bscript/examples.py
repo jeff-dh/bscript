@@ -2,9 +2,9 @@ import random
 import bscript
 
 @bscript.task
-def toggle():
-    yield 0
-    yield 1
+def toggle(on=1, off=0):
+    yield off
+    yield on
 
 @bscript.task
 def retained_random():
