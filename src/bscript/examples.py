@@ -14,20 +14,10 @@ def retained_random():
 
 @bscript.task
 def retained_choice(choices):
-    choice = None
+    choice = random.choice(choices)
     while True:
-        if choice is None or choice not in choices:
+        if choice not in choices:
             choice = random.choice(choices)
-        yield choice
-
-@bscript.task
-def stubborn_retained_choice(choices):
-    choice = None
-    while True:
-        if choice is None:
-            choice = random.choice(choices)
-        if not choice in choices:
-            print("my choice is gone, still my choice!")
         yield choice
 
 @bscript.fsm

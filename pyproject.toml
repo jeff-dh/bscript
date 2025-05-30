@@ -5,13 +5,13 @@ build-backend = "hatchling.build"
 [project]
 name = "bscript"
 dynamic = ["version"]
-description = 'a radical python implementation of the b-script behavior specification language'
+description = 'a python implementation of the b-script behavior specification language'
 readme = "README.md"
 requires-python = ">=3.13"
 license = "MIT"
-keywords = []
+keywords = ["python", "behavior", "agent", "robotic", "fsm", "async", "statemachine"]
 authors = [
-  { name = "U.N. Owen", email = "void@some.where" },
+  { name = "jeff", email = "" },
 ]
 classifiers = [
   "Development Status :: 4 - Beta",
@@ -23,9 +23,9 @@ classifiers = [
 dependencies = []
 
 [project.urls]
-Documentation = "https://github.com/U.N. Owen/bscript#readme"
-Issues = "https://github.com/U.N. Owen/bscript/issues"
-Source = "https://github.com/U.N. Owen/bscript"
+Documentation = "https://github.com/jeff-dh/bscript#readme"
+Issues = "https://github.com/jeff-dh/bscript/issues"
+Source = "https://github.com/jeff-dh/bscript"
 
 [tool.hatch.version]
 path = "src/bscript/__about__.py"

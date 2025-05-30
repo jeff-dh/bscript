@@ -8,7 +8,7 @@
 ## Table of Contents
 
 - [bscript](#bscript)
-- [Installation](#installation)
+- [Installation](#Installation)
 - [Examples](#Examples)
 - [License](#license)
 
@@ -24,57 +24,13 @@ _task_ differ from generators in these details:
     - the generators are restartet imediately if a `StopIteration` occurs
 
 The result are "generators" which can be called like regular functions and whose parameters (might) change from call to call.
-These "_state based functions_" are pretty handy to descibe complex agent / robot behaviors, because they maintain a state (e.g. decisions) from previous calls. "_tasks_" can be used similar to (or in combination with) hierachical finite state machines.
+These "_state based functions_" can be used to descibe agent / robot behaviors. Because they maintain a state from previous calls, "_tasks_" can be used similar to (or in combination with) hierachical finite state machines.
 
-### minimal example
-
-```python
->>> import bscript
->>> @bscript.task
-... def toggle():
-...     yield 0
-...     yield 1
-...
->>> toggle()
-0
->>> toggle()
-1
->>> toggle()
-0
->>> toggle()
-1
-```
-
-### Installation
-
-```console
-pip install bscript
-```
-
-## Examples
-
-### toggle
-```python
->>> import bscript
->>> @bscript.task
-... def toggle():
-...     yield 0
-...     yield 1
-...
->>> toggle()
-0
->>> toggle()
-1
->>> toggle()
-0
->>> toggle()
-1
-```
-
-### parameters
+### toggle example
 
 ```python
 >>> import bscript
+>>>
 >>> @bscript.task
 ... def toggle(on=1, off=0):
 ...     yield off
@@ -82,24 +38,33 @@ pip install bscript
 ...
 >>> toggle()
 0
->>> toggle("on", "off")
-'on'
+>>> toggle()
+1
 >>> toggle("on", "off")
 'off'
->>> toggle(off="off")
+>>> toggle()
 1
 ```
+
+## Installation
+
+```console
+pip install bscript@git+https://github.com/jeff-dh/bscript
+```
+
+## Examples
 
 ### retained choice
 
  ```python
 >>> import random
 >>> import bscript
+>>>
 >>> @bscript.task
 ... def retained_choice(choices):
-...     choice = None
+...     choice = random.choice(choices)
 ...     while True:
-...         if choice is None or choice not in choices:
+...         if choice not in choices:
 ...             choice = random.choice(choices)
 ...         yield choice
 ...
@@ -115,28 +80,6 @@ pip install bscript
 3
 >>> retained_choice([6, 7, 8])
 7
-```
-
-#### stubborn retained choice
-
-```python
->>> import random
->>> import bscript
->>> @bscript.task
-... def stubborn_retained_choice(choices):
-...     choice = None
-...     while True:
-...         if choice is None:
-...             choice = random.choice(choices)
-...         if not choice in choices:
-...             print("my choice is gone, still my choice!")
-...         yield choice
-...
->>> stubborn_retained_choice([1, 2, 3])
-1
->>> stubborn_retained_choice([2, 3])
-my choice is gone, still my choice!
-1
 ```
 
 ### statemachines
@@ -194,7 +137,8 @@ If no context is explicitly specified the default context will be used which is 
 ### custom & multiple context
 
 ```python
->>>> import bscript
+>>> import bscript
+>>>
 >>> ctx1 = bscript.bScriptContext()
 >>> ctx2 = bscript.bScriptContext()
 >>>
@@ -223,9 +167,11 @@ global `input` (world model) and `output` (action selection) are available throu
 
 ```python
 >>> import bscript
+>>>
 >>> ctx = bscript.context()
 >>> ctx.input = 5 # -> world model
 >>> ctx.output = {} # -> action selection
+>>>
 >>> # run behaviors, call bscript.input() / bscript.output() from anywhere
 >>> def foo():
 ...     bscript.output()["double"] = bscript.input() * 2
@@ -245,6 +191,7 @@ inactive if it was not called since the last call to `reset_inactive_states`
 
 ```python
 >>> import bscript
+>>>
 >>> @bscript.task
 ... def counter1():
 ...     for i in range(99):
