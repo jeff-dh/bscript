@@ -69,17 +69,17 @@ pip install bscript@git+https://github.com/jeff-dh/bscript
 ...         yield choice
 ...
 >>> retained_choice([1, 2, 3])
-2
+1
 >>> retained_choice([1, 2, 3])
-2
->>> retained_choice([1, 3])
+1
+>>> retained_choice([2, 3])
 3
->>> retained_choice([1, 3])
+>>> retained_choice([2, 3])
 3
->>> retained_choice([1, 3, 4, 5])
+>>> retained_choice([1, 2, 3, 4, 5])
 3
->>> retained_choice([6, 7, 8])
-7
+>>> retained_choice([4, 5, 6])
+4
 ```
 
 ### statemachines
@@ -101,14 +101,14 @@ a proof of concept state machine integration is included:
 ...     def off_state(self):
 ...         # decision
 ...         if self.last_state == self.state:
-...             raise self.transition(self.on_state)
+...             raise bscript.Transition(self.on_state)
 ...         # action
 ...         return self.off
 ...
 ...     def on_state(self):
 ...         # decision
 ...         if self.last_state == self.state:
-...             raise self.transition(self.off_state)
+...             raise bscript.Transition(self.off_state)
 ...         # action
 ...         return self.on
 ...
@@ -118,10 +118,10 @@ a proof of concept state machine integration is included:
 0
 >>> toggleFSM()
 1
->>> toggleFSM()
-0
 >>> toggleFSM("on", "off")
-'on'
+'off'
+>>> toggleFSM()
+1
 ```
 
 ### hierachical behaviors
