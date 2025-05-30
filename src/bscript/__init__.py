@@ -1,4 +1,5 @@
 from functools import wraps
+from dataclasses import dataclass
 
 from .bscript_context import context, bScriptContext
 from .statemachine import Statemachine, Transition, initial_state
@@ -19,7 +20,7 @@ def _managed_context(f):
         return context()._call_from_wrapper(f, *args, **kwargs)
     return wrapper
 
-def fsm(f): return _managed_context(f)
+def fsm(cls): return _managed_context(dataclass(cls))
 def task(f): return _managed_context(f)
 def input(): return context().input
 def output(): return context().output

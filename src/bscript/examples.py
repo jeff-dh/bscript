@@ -22,9 +22,9 @@ def retained_choice(choices):
 
 @bscript.fsm
 class toggleFSM(bscript.Statemachine):
-    def __init__(self, on=1, off=0):
-        self.on = on
-        self.off = off
+    # parameter with type annotations!
+    on: int = 1
+    off: int = 0
 
     @bscript.initial_state
     def off_state(self):
