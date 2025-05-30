@@ -18,9 +18,14 @@ class bScriptContext:
         # mark as active
         self._active_states.add(func_or_fsm)
 
-        # create state if necessary
+        # create state if not in self._states
         if not func_or_fsm in self._states:
             self._states[func_or_fsm] = func_or_fsm(*args, **kwargs)
+        # restart if generator is in failure state (frame == None)
+        if hasattr(self._states[func_or_fsm], "gi_frame"):
+            if self._states[func_or_fsm].gi_frame is None:
+                self._states[func_or_fsm] = func_or_fsm(*args, **kwargs)
+
         state = self._states[func_or_fsm]
 
         # bind parameters into frames / fsm
