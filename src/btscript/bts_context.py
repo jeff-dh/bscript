@@ -1,5 +1,5 @@
 from inspect import currentframe
-from typing import Any
+from typing import Any, Generator
 
 def get_var_from_parent_frames(name):
     frame = currentframe()
@@ -40,7 +40,7 @@ class bScriptContext:
 
     def _get_state(self, key, default):
         gen = self._states.get(key, None)
-        if gen is None or gen.gi_frame is None:
+        if gen is None or (isinstance(gen, Generator) and gen.gi_frame is None):
             gen = default()
             self._states[key] = gen
         return gen
