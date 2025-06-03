@@ -1,4 +1,4 @@
-from btscript import task, Success, context
+from bscript import task, Success, context
 
 def test_basics():
     @task

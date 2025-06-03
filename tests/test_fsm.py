@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Any
-from btscript import fsm, initial, Transition
-from btscript.fsm_context import Done
+from bscript import fsm, initial, Transition
+from bscript.fsm_context import Done
 
 def test_toggle():
     @fsm

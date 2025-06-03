@@ -1,7 +1,7 @@
-# btscript
+# bscript
 
-[![PyPI - Version](https://img.shields.io/pypi/v/btscript.svg)](https://pypi.org/project/btscript)
-[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/btscript.svg)](https://pypi.org/project/btscript)
+[![PyPI - Version](https://img.shields.io/pypi/v/bscript.svg)](https://pypi.org/project/bscript)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/bscript.svg)](https://pypi.org/project/bscript)
 
 -----
 
@@ -13,9 +13,9 @@
 ## Installation
 
 ```console
-pip install btscript
+pip install bscript
 ```
 
 ## License
 
-`btscript` is distributed under the terms of the [MIT](https://spdx.org/licenses/MIT.html) license.
+`bscript` is distributed under the terms of the [MIT](https://spdx.org/licenses/MIT.html) license.
