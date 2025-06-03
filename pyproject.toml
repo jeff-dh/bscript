@@ -36,6 +36,8 @@ extra-dependencies = [
 ]
 [tool.hatch.envs.types.scripts]
 check = "mypy --install-types --non-interactive {args:src/bscript tests}"
+[tool.hatch.envs.irsim]
+extra-dependencies = [ "ir-sim", ]
 
 [tool.coverage.run]
 source_pkgs = ["bscript", "tests"]
