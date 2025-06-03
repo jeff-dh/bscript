@@ -16,12 +16,27 @@ class bScriptContext:
     def __init__(self):
         self._states = {}
         self.bb = {}
+        self._active_states = set()
+        self._last_active_states = set()
 
     def execute(_bscript_context_magic, f, *args, **kwargs):
         return f(*args, **kwargs)
 
     def reset(self, key):
         self._states.pop(key, None)
+
+    def _reset_after_inactivity(self, key):
+        if not key.reset_after_inactivity:
+            return
+
+        self._active_states.add(key)
+        if not key in self._last_active_states:
+            self.reset(key)
+            self._last_active_states.add(key)
+
+    def reset_inactive_states(self):
+        self._last_active_states = self._active_states.copy()
+        self._active_states.clear()
 
     def _get_state(self, key, default):
         gen = self._states.get(key, None)

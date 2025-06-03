@@ -1,19 +1,19 @@
-from typing import Any
-import btscript
+from btscript import task, Success, context
 
 def test_basics():
-    @btscript.task
-    def toggle(on: Any=1, off: Any=0):
+    @task
+    def toggle(on=1, off=0):
         yield off
         yield on
+        # implicit return None / yield Success
 
     assert toggle() == 0
     assert toggle() == 1
-    assert toggle() == None
+    assert toggle() == Success
     assert toggle("on", "off") == "off"
 
 def test_manual_reset():
-    @btscript.task
+    @task
     def counter():
         i = 0
         while True:
@@ -26,7 +26,7 @@ def test_manual_reset():
     assert counter() == 0
 
 def test_failure_reset():
-    @btscript.task
+    @task
     def blub():
         yield 0
         raise Exception
@@ -41,7 +41,7 @@ def test_failure_reset():
     assert blub() == 0
 
 def test_return_reset():
-    @btscript.task
+    @task
     def blub():
         yield 0
         return 1
@@ -52,7 +52,7 @@ def test_return_reset():
     assert blub() == 0
 
 def test_return_reset2():
-    @btscript.task
+    @task
     def blub():
         yield 0
         return
@@ -62,20 +62,41 @@ def test_return_reset2():
     assert blub() == None
     assert blub() == 0
 
-# def test_inactive_reset():
-#     @btscript.task(reset_after_inactivity=True) #type: ignore
-#     def counter():
-#         i = 0
-#         while True:
-#             yield i
-#             i += 1
-#
-#     ctx = btscript.context()
-#
-#     assert counter() == 0
-#     assert counter() == 1
-#     ctx.reset_inactive_states()
-#     assert counter() == 2
-#     ctx.reset_inactive_states()
-#     ctx.reset_inactive_states()
-#     assert counter() == 0
+def test_inactive_reset():
+    @task(reset_after_inactivity=True) #type: ignore
+    def counter():
+        i = 0
+        while True:
+            yield i
+            i += 1
+
+    assert counter() == 0
+    assert counter() == 1
+    context().reset_inactive_states()
+    assert counter() == 2
+    context().reset_inactive_states()
+    context().reset_inactive_states()
+    assert counter() == 0
+
+def test_inactive_reset_false():
+    @task
+    def counter():
+        i = 0
+        while True:
+            yield i
+            i += 1
+
+    assert counter() == 0
+    assert counter() == 1
+    context().reset_inactive_states()
+    context().reset_inactive_states()
+    assert counter() == 2
+
+def test_iter():
+    @task
+    def iter_test():
+        yield 1
+        yield 2
+        yield 3
+
+    assert list(iter_test) == [1, 2, 3]
