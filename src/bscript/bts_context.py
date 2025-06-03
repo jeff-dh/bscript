@@ -16,6 +16,8 @@ class bScriptContext:
     def __init__(self):
         self._states = {}
         self.bb = {}
+        self.input: Any = None
+        self.output: Any = None
         self._active_states = set()
         self._last_active_states = set()
 
@@ -54,3 +56,5 @@ def context():
         return _default_context
 
 def bb(): return context().bb
+def input(): return context().input
+def output(): return context().output
