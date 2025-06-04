@@ -31,7 +31,7 @@ class fsm:
                 break
 
     def reset(self):
-        context().reset(self)
+        context().reset_state(self)
 
     def __call__(self, *args, supress_stop_iteration=True, **kwargs):
         context()._reset_after_inactivity(self)

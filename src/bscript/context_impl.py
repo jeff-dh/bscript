@@ -24,7 +24,7 @@ class bScriptContext:
     def execute(_bscript_context_magic, f, *args, **kwargs):
         return f(*args, **kwargs)
 
-    def reset(self, key):
+    def reset_state(self, key):
         self._states.pop(key, None)
 
     def _reset_after_inactivity(self, key):
@@ -33,7 +33,7 @@ class bScriptContext:
 
         self._active_states.add(key)
         if not key in self._last_active_states:
-            self.reset(key)
+            self.reset_state(key)
             self._last_active_states.add(key)
 
     def reset_inactive_states(self):
