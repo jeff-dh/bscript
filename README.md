@@ -43,7 +43,7 @@ def eat():
         - [failures and faillbacks](#failures-and-fallbacks)
         - [parallel execution of behaviors](#parallel-execution-of-behaviors)
         - [conditions](#conditions)
-        - [example](#example)
+        - [conditional parallel execution](#conditional-parallel-execution)
 - [how this works - `task`, `Running`, `Success` and `Failure` in detail](#how-this-works)
     - [python functions](#python-functions)
     - [tasks](#tasks)
@@ -61,22 +61,23 @@ pip install bscript
 
 ## Basics
 
-- a node can either be function or a task
+- a node is usually a _task_ -- which is a superset of a function
     - (finite state machine-ish nodes are also available)
-- each node in the hierarchical behavior should usually return either `Running` (`==True`) or `Success` (`==None`)
-- a node which finishes execution without returning or yielding a value implicitly returns `None` (`==Success`)
+- each node in the hierarchy should usually return either `Running` (`== True`) or `Success` (`== None`)
+- a node which finishes execution without returning or yielding a value implicitly returns `None` (`== Success`)
 
 ### actions
 
-low level nodes that execute actions can often be written as regular functions:
+low level nodes that execute actions can often be written as functions:
 
 ```python
+@task
 def drive_to(target):
     output().target = target
     return Success if target_reached(target) else Running
 ```
 
-or as a _task_:
+or as a generator:
 
 ```python
 @task
@@ -114,14 +115,14 @@ def eat():
         while eat_apple(): yield Running
 ```
 
-if `peel_banana` raises a `Failure`......
-
 #### parallel execution of behaviors
 
 ```python
 @task
 def walk_to_bus_stop():
-    while walk_to(next_bus_stop()): listen_to_music() and eat_an_apple()
+    while walk_to(next_bus_stop()):
+        listen_to_music()
+        eat_an_apple()
         yield Running
 ```
 
@@ -130,6 +131,8 @@ def walk_to_bus_stop():
 ```python
 @task
 def emergency():
+    # this is a state based decision function. Callers can make decisions
+    # based on whether this function is Running or not.
     if random() > 0.9:
         yield Running
         yield Running # always running for 2 frames in a row
@@ -144,42 +147,20 @@ def some_behavior():
         return do_something()
 ```
 
-#### example
+#### conditional parallel execution
 
 ```python
-from bscript import task, Running
-
 @task
-def travel():
-    try:
-        while walk_to(next_bus_stop()): listen_to_music()
-            yield Running
-
-        while not destination_reached(somewhere()): sit_in_bus() and read_a_book()
-            yield Running
-
-    except Failure:
-        while go_home(): yield Running
+def attend_talk():
+    while listen_to_talk():
+        if new_message():
+            read_message()
+        elif hungry():
+            eat_an_apple()
+        yield Running
 ```
 
 ## how this works
-
-### python functions
-
-in this context particular important properties of regular python functions:
-
-```python
-def foo():
-    pass
-    # implicit return None
-
-assert foo() == None
-
-def bar():
-    return # implicit None
-
-assert bar() == None
-```
 
 
 ### tasks
@@ -206,6 +187,7 @@ from bscript import task
 @task
 def foo_pass():
     pass
+    # implicit return None, like regular functions
 
 assert foo_pass() == None
 
@@ -258,21 +240,18 @@ class Failure(Exception): ...
 ```
 
 ...has pretty interesting properties, especially since each function or _task_
-always returns something -- explicitly or implicitly `None` (`== Success == not
-Running`):
+always returns something -- explicitly or implicitly `None`:
 
 ```python
-from bscript import Running, Success
-
-assert Running is not Success
-assert Success is not Running
+assert True is Running is not Success
+assert None is Success is not Running
 
 def always_successful():
     pass
     # implicit return None / Success
 
 def always_running():
-    return not None
+    return Running
 
 assert always_successful() is Success
 assert always_successful() is not Running
@@ -290,14 +269,6 @@ assert always_running() is not Success
 - `if something():` is equivalent to:
     - `if something() is Running:`
     - `if something() is not Success:`
-
-- `do_something() and do_something_else():` is equivalent to
-    - `if do_something() is Running: do_something_else():`
-    - `if do_something() is not Success: do_something_else():`
-
-- `do_something() or do_something_else():` is equivalent to
-    - `if do_something() is not Running: do_something_else():`
-    - `if do_something() is Success: do_something_else():`
 
 - a `Failure` is _raised_ and traverses up the behavior tree until it gets caught
 

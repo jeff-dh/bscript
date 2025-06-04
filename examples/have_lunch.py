@@ -24,7 +24,7 @@ def eat_banana():
 def listen_to_the_radio():
     print("~lalala~"); return Running
 
-def handle_emergency():
+def run_away():
     print("running"); return Running
 
 ##### conditions #####
@@ -36,25 +36,20 @@ def emergency():
 
 ##### composites #####
 def eat_something():
-    # a (behavior tree) decorator
     if emergency():
-        return handle_emergency()
+        return run_away()
     else:
         return eat() and listen_to_the_radio()
 
 @task
 def eat():
-    # a (behavior tree) fallback
     try:
-        while consume_banana(): yield Running
+        while peel_banana(): yield Running
+        while eat_banana(): yield Running
     except Failure:
         while eat_apple(): yield Running
 
-@task
-def consume_banana():
-    # a (behavior tree) sequence
-    while peel_banana(): yield Running
-    while eat_banana(): yield Running
+    # implicit return Success
 
 ##### main loop #####
 for _ in range(20):
