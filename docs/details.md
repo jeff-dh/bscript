@@ -87,7 +87,7 @@ assert counter() == 0
 ```
 
 
-### resetting inactivity states
+### resetting inactive states
 
 as other behavior speicification languages bscript can reset
 "inactive" _tasks_ (and state machines) with

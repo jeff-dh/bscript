@@ -284,7 +284,7 @@ this is similar to behavior tree decorators
 
 ### finite state machin-ish nodes, context handling, input & output and more
 
--> `docs/details.md`
+-> [docs/details.md](https://github.com/jeff-dh/bscript/blob/main/docs/details.md)
 
 
 ## Examples
