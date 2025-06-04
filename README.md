@@ -29,7 +29,7 @@ underlying generator. These "_state based functions_" can be used to describe
 complex and deliberate hierarchical behaviors.
 
 ```python
-from bscript import task, Running
+from bscript import task, Running, Success
 
 @task
 def travel():
@@ -38,7 +38,8 @@ def travel():
 
     while not destination_reached(): sit_in_bus() and (read_a_book() or idle())
         yield Running
-    ...
+
+    return Success
 ```
 
 this should pretty much do what you literally read....
@@ -74,7 +75,7 @@ assert bar() == None
 
 ### tasks
 
-_tasks_ are generators -- a super set of functions -- that can be called "like
+_tasks_ are generators -- a superset of functions -- that can be called "like
 functions". They have a global state each and their parameter get updated at
 each call. _tasks_ are implemented as callable _singeltons_. Furthermore they
 update their parameters (local variables inside the generator namespace) at
@@ -255,8 +256,6 @@ def travel():
 
     while not destination_reached(): sit_in_bus() and (read_a_book() or idle())
         yield Running
-
-    ...
 ```
 
 #### conditions
