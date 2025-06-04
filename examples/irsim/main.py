@@ -6,7 +6,8 @@ import irsim.lib
 import bscript
 
 # from behavior import root_behavior
-from fsm_behavior import root_behavior
+from bt_behavior import root_behavior
+# from fsm_behavior import root_behavior
 
 battery = 100
 socket = np.array([[5],[5],[0]])

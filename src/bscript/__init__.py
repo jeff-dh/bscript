@@ -7,19 +7,6 @@ Success = None
 
 class Failure(Exception): pass
 
-from itertools import chain as sequence
-
-def fallback(*tasks):
-    for t in tasks:
-        try:
-            yield from t
-            return
-        except Failure:
-            pass
-
-    raise Failure()
-
 __all__ = ["task", "bScriptContext", "context", "input", "output",
            "fsm", "initial", "NoInitialStateFound", "Transition",
-           "Running", "Success", "Failure",
-           "sequence", "fallback"]
+           "Running", "Success", "Failure"]
