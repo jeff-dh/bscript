@@ -20,24 +20,18 @@ regular functions. These "_state based functions_" can be used to describe
 complex and deliberate hierarchical behaviors.
 
 ```python
-@task
-def walk_to_bus_stop():
-    while walk_to(bus_stop()): listen_to_music()
-        yield Running
+from bscript import task, Running, Success, Failure
 
 @task
-def ride_bus_until_destination(dest):
-    while not destination_reached(dest): sit_in_bus() and read_a_book()
-        yield Running
+def eat():
+    try:
+        while peel_banana(): yield Running
+        while eat_banana(): yield Running
+    except Failure:
+        while eat_apple(): yield Running
 
-@task
-def travel():
-    while walk_to_bus_stop(): yield Running
-    while ride_bus_until_destination(somewhere()): yield Running
+    # implicit return Success
 ```
-
-this should pretty much do what it says....
-
 
 ## Table of Contents
 
@@ -49,6 +43,7 @@ this should pretty much do what it says....
         - [failures and faillbacks](#failures-and-fallbacks)
         - [parallel execution of behaviors](#parallel-execution-of-behaviors)
         - [conditions](#conditions)
+        - [example](#example)
 - [how this works - `task`, `Running`, `Success` and `Failure` in detail](#how-this-works)
     - [python functions](#python-functions)
     - [tasks](#tasks)
@@ -66,6 +61,10 @@ pip install bscript
 
 ## Basics
 
+- a node can either be function or a task
+    - (finite state machine-ish nodes are also available)
+- each node in the hierarchical behavior should usually return either `Running` (`==True`) or `Success` (`==None`)
+- a node which finishes execution without returning or yielding a value implicitly returns `None` (`==Success`)
 
 ### actions
 
@@ -115,7 +114,7 @@ def eat():
         while eat_apple(): yield Running
 ```
 
-if `peel_banana` raises a `Failure`...... it's obvious, right?
+if `peel_banana` raises a `Failure`......
 
 #### parallel execution of behaviors
 
@@ -143,6 +142,30 @@ def some_behavior():
         return Running
     else:
         return do_something()
+```
+
+#### example
+
+```python
+from bscript import task, Running
+
+@task
+def walk_to_next_bus_stop():
+    while walk_to(next_bus_stop()): listen_to_music()
+        yield Running
+
+@task
+def ride_bus_until_destination(dest):
+    while not destination_reached(dest): sit_in_bus() and read_a_book()
+        yield Running
+
+@task
+def travel():
+    try:
+        while walk_to_next_bus_stop(): yield Running
+        while ride_bus_until_destination(somewhere()): yield Running
+    except Failure:
+        while go_home(): yield Running
 ```
 
 ## how this works
