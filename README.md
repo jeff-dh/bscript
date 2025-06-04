@@ -21,12 +21,14 @@ Only works with `python>=3.13`.
 It is similar to hierarchical finite state machine approaches, but primarily
 uses decorated python generators -- called _tasks_ -- instead of finite state
 machines.
+
 `bscript` enables an imperative scripting like approach to behavior
 engineering.
 
-_tasks_ are callable _singletons_ which wrap a "global" generator state for each
-underlying generator. These "_state based functions_" can be used to describe
-complex and deliberate hierarchical behaviors.
+_tasks_ are callable _singletons_ which wrap a "global" generator state for
+the underlying generator and can be called like regular functions. These
+"_state based functions_" can be used to describe complex and deliberate
+hierarchical behaviors.
 
 ```python
 from bscript import task, Running, Success
@@ -42,7 +44,7 @@ def travel():
     return Success
 ```
 
-this should pretty much do what you literally read....
+this should pretty much do what it says....
 
 
 ## Installation
