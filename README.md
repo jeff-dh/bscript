@@ -47,7 +47,7 @@ this should pretty much do what you literally read....
 ## Installation
 
 ```console
-pip install bscript@git+https://github.com/jeff-dh/bscript
+pip install bscript
 ```
 
 ## Basics
@@ -61,11 +61,12 @@ in this context particular important properties of regular python functions
 ```python
 def foo():
     pass
+    # implicit return None
 
 assert foo() == None
 
 def bar():
-    return
+    return # implicit None
 
 assert bar() == None
 ```
@@ -92,6 +93,8 @@ therefor inside _tasks_ aswell. They behave as expected:
 the result is pretty similar to functions:
 
 ```python
+from bscript import task
+
 @task
 def foo_pass():
     pass
@@ -136,7 +139,7 @@ assert foox(1) == None
 ### `Running`, `Success`, `Failure`
 
 inspired by behavior trees, `bscript` defines the states `Running`, `Success`
-and `Failure`. It turned out to be convenient to define them like this:
+and `Failure`. It turns out defining them like this...
 
 ```python
 Running = True
@@ -144,19 +147,19 @@ Success = None
 class Failure(Exception): ...
 ```
 
-These definitions have pretty interesting properties, especially since each
-(function and _task_) call always returns something -- explicitly or implicitly
-`None`.
-
-#### Properties:
+...has pretty interesting properties, especially since each
+function or _task_ always returns something -- explicitly or implicitly
+`None` (which is equivalent to `Success`):
 
 ```python
+from bscript import Running, Success
+
 assert Running is not Success
 assert Success is not Running
 
 def always_successful():
     pass
-    # implicit return None
+    # implicit return None / Success
 
 def always_running():
     return not None
@@ -189,7 +192,7 @@ assert always_running() is not Success
 All those _sentences_ are valid python code and actually work when all nodes
 use `Running` and `Success` as return values.
 
-These are the basic building blocks for behaviors with `bscript`.
+These are the basic building blocks for `bscript` behaviors.
 
 ### actions
 
@@ -243,8 +246,6 @@ def eat():
 ```
 
 #### parallel execution of behaviors
-
-the body of the while loop....
 
 ```python
 @task
