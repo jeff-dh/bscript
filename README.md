@@ -7,8 +7,6 @@
 
 ## bscript
 
-Only works with `python>=3.13`.
-
 `bscript` is a python behavior specification library for agents respectively
 robots. It is similar to hierarchical finite state machine approaches, but
 primarily uses decorated python generators -- called _tasks_ -- instead of
@@ -45,16 +43,16 @@ this should pretty much do what it says....
 
 - [Installation](#installation)
 - [Basics](#Basics)
-    - [actions](#actions)
+    - [actions - low level behaviors](#actions)
     - [high level behaviors](#high-level-behaviors)
         - [sequence of sub behaviors](#sequence-of-sub-behaviors)
         - [failures and faillbacks](#failures-and-fallbacks)
         - [parallel execution of behaviors](#parallel-execution-of-behaviors)
         - [conditions](#conditions)
-    - [how this works](#how-this-works)
-    - [python functions](#python-functions)
-    - [tasks](#tasks)
-    - [`Running`, `Success` & `Failure`](#running-success-failure)
+    - [how this works - `task`, `Running`, `Success` and `Failure` in detail](#how-this-works)
+        - [python functions](#python-functions)
+        - [tasks](#tasks)
+        - [`Running`, `Success` & `Failure`](#running-success-failure)
 - [Examples](#Examples)
 - [License](#license)
 
@@ -99,7 +97,7 @@ def drive_to(target):
 ```python
 @task
 def eat():
-    while peal_banana(): yield Running
+    while peel_banana(): yield Running
     while eat_banana(): yield Running
 
     # Success (implicit return None / Success)
@@ -107,18 +105,17 @@ def eat():
 
 #### failures and fallbacks
 
-If a (sub) behavior raises a `Failure` (`Exception`) it traverse upwards the
-call tree until it gets caught and handled -- as exceptions naturally do, which
-complies with behavior tree failures and makes a lot of sense in behaviors:
-
 ```python
 @task
 def eat():
     try:
+        while peel_banana(): yield Running
         while eat_banana(): yield Running
     except Failure:
         while eat_apple(): yield Running
 ```
+
+if `peel_banana` raises a `Failure`...... it's obvious, right?
 
 #### parallel execution of behaviors
 
@@ -147,8 +144,6 @@ def some_behavior():
     else:
         return do_something()
 ```
-
-this is similar to behavior tree decorators
 
 ### how this works
 
