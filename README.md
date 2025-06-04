@@ -23,25 +23,20 @@ the underlying generator and can be called like regular functions. These
 hierarchical behaviors.
 
 ```python
-from bscript import task, Running, Success
-
 @task
 def walk_to_bus_stop():
-    while walk_to(next_bus_stop()): listen_to_music() and eat_an_apple()
+    while walk_to(bus_stop()): listen_to_music()
         yield Running
-    return Success
 
-@task ride_bus_until_destination():
-    while not destination_reached(): sit_in_bus() and (read_a_book() or idle())
+@task
+def ride_bus_until_destination(dest):
+    while not destination_reached(dest): sit_in_bus() and read_a_book()
         yield Running
-    return Success
 
 @task
 def travel():
     while walk_to_bus_stop(): yield Running
-    while ride_bus_until_destination(): yield Running
-
-    return Success
+    while ride_bus_until_destination(somewhere()): yield Running
 ```
 
 this should pretty much do what it says....
