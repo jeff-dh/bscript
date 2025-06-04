@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from inspect import isclass, ismethod
 
 from .context_impl import context
@@ -15,8 +16,7 @@ def initial(fsm_method):
 class NoInitialStateFound(BaseException): pass
 
 
-@optional_arg_decorator
-class fsm:
+class FSMContext:
     def __init__(self, fsmCls, reset_after_inactivity=False):
         assert isclass(fsmCls)
         self.fsmCls = fsmCls
@@ -62,6 +62,9 @@ class fsm:
             else:
                 raise
 
+@optional_arg_decorator
+def fsm(cls, reset_after_inactivity=False):
+    return FSMContext(dataclass(cls), reset_after_inactivity)
 
 def set_initial_state(fsm):
     for attr_name in fsm.__dir__():

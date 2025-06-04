@@ -1,10 +1,8 @@
-from dataclasses import dataclass
 from typing import Any
 from bscript import fsm, initial, Transition
 
 def test_toggle():
     @fsm
-    @dataclass
     class toggle_fsm:
         # parameter with type annotations!
         on: Any = 1
