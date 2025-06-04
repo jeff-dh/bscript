@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 from typing import Any
 from bscript import fsm, initial, Transition
-from bscript import Done
 
 def test_toggle():
     @fsm
@@ -46,7 +45,7 @@ def test_stop_iteration():
 
         @initial
         def _(self):
-            if self.c >= 2: raise Done()
+            if self.c >= 2: raise StopIteration()
             self.c += 1
             return self.c
 
@@ -63,7 +62,7 @@ def test_iter():
 
         @initial
         def _(self):
-            if self.c >= 3: raise Done()
+            if self.c >= 3: raise StopIteration()
             self.c += 1
             return self.c
 

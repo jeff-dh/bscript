@@ -14,8 +14,6 @@ def initial(fsm_method):
 
 class NoInitialStateFound(BaseException): pass
 
-class Done(StopIteration): pass
-
 
 @optional_arg_decorator
 class fsm:
