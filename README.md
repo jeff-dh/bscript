@@ -150,20 +150,14 @@ def some_behavior():
 from bscript import task, Running
 
 @task
-def walk_to_next_bus_stop():
-    while walk_to(next_bus_stop()): listen_to_music()
-        yield Running
-
-@task
-def ride_bus_until_destination(dest):
-    while not destination_reached(dest): sit_in_bus() and read_a_book()
-        yield Running
-
-@task
 def travel():
     try:
-        while walk_to_next_bus_stop(): yield Running
-        while ride_bus_until_destination(somewhere()): yield Running
+        while walk_to(next_bus_stop()): listen_to_music()
+            yield Running
+
+        while not destination_reached(somewhere()): sit_in_bus() and read_a_book()
+            yield Running
+
     except Failure:
         while go_home(): yield Running
 ```
@@ -308,7 +302,7 @@ assert always_running() is not Success
 - a `Failure` is _raised_ and traverses up the behavior tree until it gets caught
 
 All those _sentences_ are valid python code and actually work when all nodes
-use `Running` and `Success` as return values.
+return either `Running` or `Success`.
 
 These are the basic building blocks for `bscript` behaviors.
 
