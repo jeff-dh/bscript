@@ -1,6 +1,6 @@
 from inspect import getcallargs, getgeneratorlocals, isgeneratorfunction
 
-from .bts_context import context
+from .context_impl import context
 from .utils import optional_arg_decorator
 
 @optional_arg_decorator

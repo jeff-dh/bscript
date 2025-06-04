@@ -1,6 +1,6 @@
 from inspect import isclass, ismethod
 
-from .bts_context import context
+from .context_impl import context
 from .utils import get_bound_arguments, optional_arg_decorator
 
 

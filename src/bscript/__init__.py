@@ -1,6 +1,6 @@
-from .task_context import task
-from .bts_context import bScriptContext, context, input, output
-from .fsm_context import fsm, initial, NoInitialStateFound, Transition
+from .task_impl import task
+from .context_impl import bScriptContext, context, input, output
+from .fsm_impl import fsm, initial, NoInitialStateFound, Transition, Done
 
 Running = True
 Success = None
@@ -8,5 +8,5 @@ Success = None
 class Failure(Exception): pass
 
 __all__ = ["task", "bScriptContext", "context", "input", "output",
-           "fsm", "initial", "NoInitialStateFound", "Transition",
+           "fsm", "initial", "NoInitialStateFound", "Transition", "Done",
            "Running", "Success", "Failure"]
