@@ -10,6 +10,7 @@
 - [bscript](#bscript)
 - [Installation](#installation)
 - [Basics](#Basics)
+- [Examples](#Examples)
 - [License](#license)
 
 ## bscript
@@ -269,6 +270,16 @@ this is similar to behavior tree decorators
 ### finite state machin-ish nodes, context handling, input & output and more
 
 -> `docs/details.md`
+
+
+## Examples
+
+The [lunch
+behavior](https://github.com/jeff-dh/bscript/blob/main/examples/have_lunch.py)
+and the [irsim
+behavior](https://github.com/jeff-dh/bscript/blob/main/examples/irsim/behavior.py)
+show basic example applications.
+
 
 ## License
 
