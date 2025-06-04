@@ -5,24 +5,6 @@
 
 -----
 
-## Table of Contents
-
-- [bscript](#bscript)
-- [Installation](#installation)
-- [Basics](#Basics)
-    - [python functions](#python-functions)
-    - [tasks](#tasks)
-    - [`Running`, `Success` & `Failure`](#running-success-failure)
-    - [actions](#actions)
-    - [high level behaviors](#high-level-behaviors)
-        - [sequence of sub behaviors](#sequence-of-sub-behaviors)
-        - [failures and faillbacks](#failures-and-fallbacks)
-        - [parallel execution of behaviors](#parallel-execution-of-behaviors)
-        - [conditions](#conditions)
-        - [finit state machines, context, input & output](#finite-state-machin-ish-nodes-context-handling-input--output-and-more)
-- [Examples](#Examples)
-- [License](#license)
-
 ## bscript
 
 Only works with `python>=3.13`.
@@ -55,6 +37,24 @@ def travel():
 ```
 
 this should pretty much do what it says....
+
+
+## Table of Contents
+
+- [Installation](#installation)
+- [Basics](#Basics)
+    - [python functions](#python-functions)
+    - [tasks](#tasks)
+    - [`Running`, `Success` & `Failure`](#running-success-failure)
+    - [actions](#actions)
+    - [high level behaviors](#high-level-behaviors)
+        - [sequence of sub behaviors](#sequence-of-sub-behaviors)
+        - [failures and faillbacks](#failures-and-fallbacks)
+        - [parallel execution of behaviors](#parallel-execution-of-behaviors)
+        - [conditions](#conditions)
+        - [finit state machines, context, input & output](#finite-state-machin-ish-nodes-context-handling-input--output-and-more)
+- [Examples](#Examples)
+- [License](#license)
 
 
 ## Installation
