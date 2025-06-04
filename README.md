@@ -10,18 +10,27 @@
 `bscript` is a python behavior specification library for agents respectively
 robots. It is similar to hierarchical finite state machine approaches, but
 primarily uses decorated python generators -- called _tasks_ -- instead of
-finite state machines.
-
-`bscript` provides an imperative scripting like approach to behavior
-engineering.
+finite state machines. This provides an imperative scripting like approach to
+behavior engineering.
 
 _tasks_ are callable _singletons_ which wrap a generator and can be called like
-regular functions. These "_state based functions_" can be used to describe
-complex and deliberate hierarchical behaviors.
+regular functions.
 
 ```python
-from bscript import task, Running, Success, Failure
+@task
+def foo():
+    yield 1
+    return 2
 
+assert foo() == 1
+assert foo() == 2
+assert foo() == 1
+```
+
+These "_state based functions_" can be used to describe complex and deliberate
+hierarchical behaviors.
+
+```python
 @task
 def eat():
     try:
@@ -47,7 +56,7 @@ def eat():
 - [how this works - `task`, `Running`, `Success` and `Failure` in detail](#how-this-works)
     - [python functions](#python-functions)
     - [tasks](#tasks)
-    - [`Running`, `Success` & `Failure`](#running-success-failure)
+    - [`Running` & `Failure`](#running-success)
 - [Examples](#Examples)
 - [License](#license)
 
@@ -64,7 +73,7 @@ pip install bscript
 - a node is usually a _task_ -- which is a superset of a function
     - (finite state machine-ish nodes are also available)
 - each node in the hierarchy should usually return either `Running` (`== True`) or `Success` (`== None`)
-- a node which finishes execution without returning or yielding a value implicitly returns `None` (`== Success`)
+- when a node finishes its execution without returning or yielding a value, it implicitly returns `None` (`== Success`)
 
 ### actions
 
@@ -139,6 +148,7 @@ def emergency():
 
     # implicit return None == not Running
 
+@task
 def some_behavior():
     if emergency():
         run_away()
@@ -228,10 +238,10 @@ assert foox(9) == 9
 assert foox(1) == None
 ```
 
-### `Running`, `Success`, `Failure`
+### `Running` & `Success`
 
-(inspired by behavior trees) `bscript` defines the states `Running`, `Success`
-and `Failure`. It turns out defining them like this...
+`bscript` defines the states `Running`, `Success` and `Failure`. It turns out
+defining them like this...
 
 ```python
 Running = True
@@ -260,7 +270,7 @@ assert always_running() is Running
 assert always_running() is not Success
 ```
 
-### `while`, `if`, `and` and `or` in combination with `Running` & `Success`
+### `while` and `if` in combination with `Running` & `Success`
 
 - `while do_something():` is equivalent to
     - `while do_something() is Running:`
@@ -269,13 +279,6 @@ assert always_running() is not Success
 - `if something():` is equivalent to:
     - `if something() is Running:`
     - `if something() is not Success:`
-
-- a `Failure` is _raised_ and traverses up the behavior tree until it gets caught
-
-All those _sentences_ are valid python code and actually work when all nodes
-return either `Running` or `Success`.
-
-These are the basic building blocks for `bscript` behaviors.
 
 
 ### finite state machin-ish nodes, context handling, input & output and more
