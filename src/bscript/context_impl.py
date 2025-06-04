@@ -1,21 +1,10 @@
-from inspect import currentframe
 from typing import Any, Generator
-
-def get_var_from_parent_frames(name):
-    frame = currentframe()
-
-    while frame and not name in frame.f_locals:
-        frame = frame.f_back
-
-    if not frame:
-        raise RuntimeError()
-
-    return frame.f_locals[name]
+from .utils import get_var_from_parent_frames
 
 class bScriptContext:
     def __init__(self):
         self._states = {}
-        self.bb = {}
+        self.bb = {} # blackboard
         self.input: Any = None
         self.output: Any = None
         self._active_states = set()

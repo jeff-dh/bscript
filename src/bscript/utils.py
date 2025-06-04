@@ -1,4 +1,4 @@
-from inspect import signature
+from inspect import signature, currentframe
 
 def get_bound_arguments(fsmCls, *args, **kwargs):
     bound_kwargs = signature(fsmCls).bind(*args, **kwargs)
@@ -15,3 +15,14 @@ def optional_arg_decorator(fn):
             return real_decorator
 
     return wrapped_decorator
+
+def get_var_from_parent_frames(name):
+    frame = currentframe()
+
+    while frame and not name in frame.f_locals:
+        frame = frame.f_back
+
+    if not frame:
+        raise RuntimeError()
+
+    return frame.f_locals[name]
