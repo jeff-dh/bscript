@@ -123,9 +123,11 @@ assert foo_return() == 1
 @task
 def foo_yield():
     yield 1
+    # implicit return None
 
 assert foo_yield() == 1
 assert foo_yield() == None
+assert foo_yield() == 1
 
 @task
 def foobar():
