@@ -78,13 +78,14 @@ implemented as callable _singeltons_. Furthermore they update their parameters
 (local variables inside the generator namespace) at each call and a
 `StopIteration` is transformed into a `return` statement like behavior.
 
-A _task_ is pretty much a "function with an internal state" or a "function"
+A _task_ is pretty much a "function with an internal state" or a "function
 with `yield` statements".
 
 `yield` and `return` statements can be mixed inside python generators -- and
 therefor inside _tasks_ aswell. They behave as expected:
-    - `yield` returns a value and resumes the execution
-    - `return` returns a value and restarts the execution
+
+- `yield` returns a value and resumes the execution
+- `return` returns a value and restarts the execution
 
 the result is somehow similar to functions:
 
