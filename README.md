@@ -14,7 +14,7 @@ It is similar to hierarchical finite state machine approaches, but primarily
 uses decorated python generators -- called _tasks_ -- instead of finite state
 machines.
 
-`bscript` enables an imperative scripting like approach to behavior
+`bscript` provides an imperative scripting like approach to behavior
 engineering.
 
 _tasks_ are callable _singletons_ which wrap a "global" generator state for
@@ -26,12 +26,20 @@ hierarchical behaviors.
 from bscript import task, Running, Success
 
 @task
-def travel():
+def walk_to_bus_stop():
     while walk_to(next_bus_stop()): listen_to_music() and eat_an_apple()
         yield Running
+    return Success
 
+@task ride_bus_until_destination():
     while not destination_reached(): sit_in_bus() and (read_a_book() or idle())
         yield Running
+    return Success
+
+@task
+def travel():
+    while walk_to_bus_stop(): yield Running
+    while ride_bus_until_destination(): yield Running
 
     return Success
 ```
@@ -60,6 +68,7 @@ this should pretty much do what it says....
 ## Installation
 
 ```console
+# only available for python >= 3.13
 pip install bscript
 ```
 
@@ -88,11 +97,9 @@ assert bar() == None
 ### tasks
 
 _tasks_ are generators -- a superset of functions -- that can be called "like
-functions". They have a global state each and their parameter get updated at
-each call. _tasks_ are implemented as callable _singeltons_. Furthermore they
-update their parameters (local variables inside the generator namespace) at
-each call and a `StopIteration` is transformed into a `return` statement like
-behavior.
+functions". They are implemented as callable _singeltons_ and update their
+parameters (local variables inside the generator namespace). A `StopIteration`
+is transformed into a `return` statement like behavior.
 
 A _task_ is pretty much a "function with an internal state" or a "function
 with `yield` statements".
@@ -153,7 +160,7 @@ assert foox(1) == None
 
 ### `Running`, `Success`, `Failure`
 
-inspired by behavior trees, `bscript` defines the states `Running`, `Success`
+(inspired by behavior trees) `bscript` defines the states `Running`, `Success`
 and `Failure`. It turns out defining them like this...
 
 ```python
@@ -162,9 +169,9 @@ Success = None
 class Failure(Exception): ...
 ```
 
-...has pretty interesting properties, especially since each
-function or _task_ always returns something -- explicitly or implicitly
-`None` (which is equivalent to `Success`):
+...has pretty interesting properties, especially since each function or _task_
+always returns something -- explicitly or implicitly `None` (`== Success == not
+Running`):
 
 ```python
 from bscript import Running, Success
@@ -186,21 +193,23 @@ assert always_running() is Running
 assert always_running() is not Success
 ```
 
-- `while do_something()` is equivalent to
-    - `while do_something() is Running`
-    - `while do_something() is not Success`
+#### `while`, `if`, `and` and `or` in combination with `Running` & `Success`
 
-- `if something()` is equivalent to:
-    - `if something() is Running`
-    - `if something() is not Success`
+- `while do_something():` is equivalent to
+    - `while do_something() is Running:`
+    - `while do_something() is not Success:`
 
-- `do_something() and do_something_else()` is equivalent to
-    - `if do_something() is Running: do_something_else()`
-    - `if do_something() is not Success: do_something_else()`
+- `if something():` is equivalent to:
+    - `if something() is Running:`
+    - `if something() is not Success:`
 
-- `do_something() or do_something_else()` is equivalent to
-    - `if do_something() is not Running: do_something_else()`
-    - `if do_something() is Success: do_something_else()`
+- `do_something() and do_something_else():` is equivalent to
+    - `if do_something() is Running: do_something_else():`
+    - `if do_something() is not Success: do_something_else():`
+
+- `do_something() or do_something_else():` is equivalent to
+    - `if do_something() is not Running: do_something_else():`
+    - `if do_something() is Success: do_something_else():`
 
 - a `Failure` is _raised_ and traverses up the behavior tree until it gets caught
 
@@ -264,11 +273,8 @@ def eat():
 
 ```python
 @task
-def travel():
+def walk_to_bus_stop():
     while walk_to(next_bus_stop()): listen_to_music() and eat_an_apple()
-        yield Running
-
-    while not destination_reached(): sit_in_bus() and (read_a_book() or idle())
         yield Running
 ```
 
@@ -278,8 +284,8 @@ def travel():
 @task
 def emergency():
     if random() > 0.9:
-        yield "ALARM"
-        yield "ALARM"
+        yield Running
+        yield Running # always running for 2 frames in a row
 
     # implicit return None == not Running
 
