@@ -1,10 +1,9 @@
-from inspect import getcallargs, getgeneratorlocals, isgeneratorfunction
+from inspect import getcallargs, getgeneratorlocals, isfunction, isgeneratorfunction
 
 from .context_impl import context
 from .utils import optional_arg_decorator
 
-@optional_arg_decorator
-class task:
+class TaskContext:
     def __init__(self, generatorfunction, reset_after_inactivity=False):
         assert isgeneratorfunction(generatorfunction)
         self.generatorfunction = generatorfunction
@@ -44,3 +43,11 @@ class task:
         except Exception:
             self.reset()
             raise
+
+@optional_arg_decorator
+def task(f, reset_after_inactivity=False):
+    if isgeneratorfunction(f):
+        return TaskContext(f, reset_after_inactivity)
+    else:
+        assert isfunction(f)
+        return f

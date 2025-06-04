@@ -73,11 +73,12 @@ assert bar() == None
 
 ### tasks
 
-_tasks_ are generators that can be called "like functions". They have a
-global state each and their parameter get updated at each call. _tasks_ are
-implemented as callable _singeltons_. Furthermore they update their parameters
-(local variables inside the generator namespace) at each call and a
-`StopIteration` is transformed into a `return` statement like behavior.
+_tasks_ are generators -- a super set of functions -- that can be called "like
+functions". They have a global state each and their parameter get updated at
+each call. _tasks_ are implemented as callable _singeltons_. Furthermore they
+update their parameters (local variables inside the generator namespace) at
+each call and a `StopIteration` is transformed into a `return` statement like
+behavior.
 
 A _task_ is pretty much a "function with an internal state" or a "function
 with `yield` statements".
@@ -88,15 +89,27 @@ therefor inside _tasks_ aswell. They behave as expected:
 - `yield` returns a value and resumes the execution
 - `return` returns a value and restarts the execution
 
-the result is somehow similar to functions:
+the result is pretty similar to functions:
 
 ```python
 @task
-def bla():
+def foo_pass():
+    pass
+
+assert foo_pass() == None
+
+@task
+def foo_return():
+    return 1
+
+assert foo_return() == 1
+
+@task
+def foo_yield():
     yield 1
 
-assert bla() == 1
-assert bla() == None
+assert foo_yield() == 1
+assert foo_yield() == None
 
 @task
 def foobar():
