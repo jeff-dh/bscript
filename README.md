@@ -49,10 +49,10 @@ this should pretty much do what it says....
         - [failures and faillbacks](#failures-and-fallbacks)
         - [parallel execution of behaviors](#parallel-execution-of-behaviors)
         - [conditions](#conditions)
-    - [how this works - `task`, `Running`, `Success` and `Failure` in detail](#how-this-works)
-        - [python functions](#python-functions)
-        - [tasks](#tasks)
-        - [`Running`, `Success` & `Failure`](#running-success-failure)
+- [how this works - `task`, `Running`, `Success` and `Failure` in detail](#how-this-works)
+    - [python functions](#python-functions)
+    - [tasks](#tasks)
+    - [`Running`, `Success` & `Failure`](#running-success-failure)
 - [Examples](#Examples)
 - [License](#license)
 
@@ -145,9 +145,9 @@ def some_behavior():
         return do_something()
 ```
 
-### how this works
+## how this works
 
-#### python functions
+### python functions
 
 in this context particular important properties of regular python functions:
 
@@ -165,7 +165,7 @@ assert bar() == None
 ```
 
 
-#### tasks
+### tasks
 
 _tasks_ are generators -- a superset of functions -- that can be called "like
 functions". They are implemented as callable _singeltons_ and update their
@@ -229,7 +229,7 @@ assert foox(9) == 9
 assert foox(1) == None
 ```
 
-#### `Running`, `Success`, `Failure`
+### `Running`, `Success`, `Failure`
 
 (inspired by behavior trees) `bscript` defines the states `Running`, `Success`
 and `Failure`. It turns out defining them like this...
@@ -264,7 +264,7 @@ assert always_running() is Running
 assert always_running() is not Success
 ```
 
-#### `while`, `if`, `and` and `or` in combination with `Running` & `Success`
+### `while`, `if`, `and` and `or` in combination with `Running` & `Success`
 
 - `while do_something():` is equivalent to
     - `while do_something() is Running:`
@@ -290,7 +290,7 @@ use `Running` and `Success` as return values.
 These are the basic building blocks for `bscript` behaviors.
 
 
-#### finite state machin-ish nodes, context handling, input & output and more
+### finite state machin-ish nodes, context handling, input & output and more
 
 -> [docs/details.md](https://github.com/jeff-dh/bscript/blob/main/docs/details.md)
 
