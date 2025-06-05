@@ -91,12 +91,3 @@ def test_inactive_reset_false():
     context().reset_inactive_states()
     context().reset_inactive_states()
     assert counter() == 2
-
-def test_iter():
-    @task
-    def iter_test():
-        yield 1
-        yield 2
-        yield 3
-
-    assert list(iter_test) == [1, 2, 3]

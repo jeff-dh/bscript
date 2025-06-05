@@ -51,19 +51,3 @@ def test_stop_iteration():
     assert done_fsm() == 2
     assert done_fsm() == None
     assert done_fsm() == 1
-
-
-def test_iter():
-    @fsm
-    class iter_fsm:
-        c = 0
-
-        @initial
-        def _(self):
-            if self.c >= 3: raise StopIteration()
-            self.c += 1
-            return self.c
-
-    assert list(iter_fsm) == [1, 2, 3]
-
-#todo test generator

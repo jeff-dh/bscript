@@ -23,17 +23,10 @@ class FSMContext:
         self.reset_after_inactivity = reset_after_inactivity
         self.reset()
 
-    def __iter__(self):
-        while True:
-            try:
-                yield self.__call__(supress_stop_iteration=False)
-            except StopIteration:
-                break
-
     def reset(self):
         context().reset_state(self)
 
-    def __call__(self, *args, supress_stop_iteration=True, **kwargs):
+    def __call__(self, *args, **kwargs):
         context()._reset_after_inactivity(self)
         callargs = get_bound_arguments(self.fsmCls, *args, **kwargs)
 
@@ -57,10 +50,7 @@ class FSMContext:
                     return res
         except StopIteration as stop:
             self.reset()
-            if supress_stop_iteration:
-                return stop.value
-            else:
-                raise
+            return stop.value
 
 @optional_arg_decorator
 def fsm(cls, reset_after_inactivity=False):
