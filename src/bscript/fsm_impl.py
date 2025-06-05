@@ -32,7 +32,7 @@ class FSMContext:
 
         # get fsm
         def default():
-            default = lambda: set_initial_state(self.fsmCls(**callargs))
+            default = lambda: self._set_initial_state(self.fsmCls(**callargs))
             return context()._get_state(self, default)
         fsm = context()._get_state(self, default)
 
@@ -52,17 +52,18 @@ class FSMContext:
             self.reset()
             return stop.value
 
+    def _set_initial_state(self, fsm):
+        for attr_name in fsm.__dir__():
+            attr = getattr(fsm, attr_name)
+
+            if ismethod(attr):
+                if hasattr(attr, "_bscript_initial_state"):
+                    setattr(fsm, "_fsm_state", attr)
+                    return fsm
+
+        raise NoInitialStateFound(fsm.__class__.__name__)
+
 @optional_arg_decorator
 def fsm(cls, reset_after_inactivity=False):
     return FSMContext(dataclass(cls), reset_after_inactivity)
 
-def set_initial_state(fsm):
-    for attr_name in fsm.__dir__():
-        attr = getattr(fsm, attr_name)
-
-        if ismethod(attr):
-            if hasattr(attr, "_bscript_initial_state"):
-                setattr(fsm, "_fsm_state", attr)
-                return fsm
-
-    raise NoInitialStateFound(fsm.__class__.__name__)
