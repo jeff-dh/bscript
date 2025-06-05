@@ -8,13 +8,13 @@
 ## bscript
 
 `bscript` is a python behavior specification library for agents respectively
-robots. It is similar to hierarchical finite state machine approaches, but
-primarily uses decorated python generators -- called _tasks_ -- instead of
-finite state machines. This provides an imperative scripting like approach to
-behavior engineering.
+robots. It is similar to hierarchical finite state machines, but primarily uses
+decorated python generators -- called _tasks_ -- instead of finite state
+machines. This provides an imperative scripting like approach to behavior
+engineering.
 
 _tasks_ are callable _singletons_ which wrap a generator and can be called like
-regular functions.
+regular functions:
 
 ```python
 @task
@@ -28,7 +28,7 @@ assert foo() == 1
 ```
 
 These "_state based functions_" can be used to describe complex and deliberate
-hierarchical behaviors.
+hierarchical behaviors:
 
 ```python
 @task
@@ -74,6 +74,7 @@ pip install bscript
     - (finite state machine-ish nodes are also available)
 - each node in the hierarchy should usually return either `Running` (`== True`) or `Success` (`== None`)
 - when a node finishes its execution without returning or yielding a value, it implicitly returns `None` (`== Success`)
+- a `Failure` is an exception and must be raised (and caught)
 
 ### actions
 
@@ -141,7 +142,7 @@ def walk_to_bus_stop():
 @task
 def emergency():
     # this is a state based decision function. Callers can make decisions
-    # based on whether this function is Running or not.
+    # based on whether this task is Running or not.
     if random() > 0.9:
         yield Running
         yield Running # always running for 2 frames in a row
