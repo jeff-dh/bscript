@@ -53,10 +53,9 @@ def eat():
         - [parallel execution of behaviors](#parallel-execution-of-behaviors)
         - [conditions](#conditions)
         - [conditional parallel execution](#conditional-parallel-execution)
-- [how this works - `task`, `Running`, `Success` and `Failure` in detail](#how-this-works)
-    - [python functions](#python-functions)
-    - [tasks](#tasks)
-    - [`Running` & `Failure`](#running-success)
+- [how this works](#how-this-works)
+    - [`task`](#tasks)
+    - [`Running` & `Success`](#running-success)
 - [Examples](#Examples)
 - [License](#license)
 
@@ -141,13 +140,10 @@ def walk_to_bus_stop():
 ```python
 @task
 def emergency():
-    # this is a state based decision function. Callers can make decisions
-    # based on whether this task is Running or not.
+    # callers can make decisions based on whether this task is Running or not
     if random() > 0.9:
         yield Running
         yield Running # always running for 2 frames in a row
-
-    # implicit return None == not Running
 
 @task
 def some_behavior():
@@ -176,8 +172,8 @@ def attend_talk():
 
 ### tasks
 
-_tasks_ are generators -- a superset of functions -- that can be called "like
-functions". They are implemented as callable _singeltons_ and update their
+_tasks_ are generators -- a superset of functions -- that can be called like
+functions. They are implemented as callable _singeltons_ and update their
 parameters (local variables inside the generator namespace). A `StopIteration`
 is transformed into a `return` statement like behavior.
 
@@ -241,13 +237,12 @@ assert foox(1) == None
 
 ### `Running` & `Success`
 
-`bscript` defines the states `Running`, `Success` and `Failure`. It turns out
-defining them like this...
+`bscript` defines the states `Running` and `Success`. It turns out defining
+them like this...
 
 ```python
 Running = True
 Success = None
-class Failure(Exception): ...
 ```
 
 ...has pretty interesting properties, especially since each function or _task_
