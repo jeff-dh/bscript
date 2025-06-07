@@ -1,5 +1,5 @@
 from .task_impl import task
-from .context_impl import bScriptContext, context, input, output
+from .context_impl import bScriptContext, context, input, output, tracer
 from .fsm_impl import fsm, initial, NoInitialStateFound, Transition
 
 Running = True

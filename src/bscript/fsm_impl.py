@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from inspect import isclass, ismethod
 
-from .context_impl import context
+from .context_impl import context, tracer
 from .utils import get_bound_arguments, optional_arg_decorator
 
 
@@ -42,12 +42,13 @@ class FSMContext:
 
         #call
         try:
-            match (res := fsm._fsm_state()): # type: ignore
-                case Transition():
-                    fsm._fsm_state = res.next # type: ignore
-                    return self.__call__(**callargs)
-                case _:
-                    return res
+            with tracer().trace_call(self.fsmCls, *args, **kwargs):
+                match (res := fsm._fsm_state()): # type: ignore
+                    case Transition():
+                        fsm._fsm_state = res.next # type: ignore
+                        return self.__call__(**callargs)
+                    case _:
+                        return res
         except StopIteration as stop:
             self.reset()
             return stop.value

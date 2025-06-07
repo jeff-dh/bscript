@@ -1,6 +1,6 @@
 from inspect import getcallargs, getgeneratorlocals, isfunction, isgeneratorfunction
 
-from .context_impl import context
+from .context_impl import context, tracer
 from .utils import optional_arg_decorator
 
 class TaskContext:
@@ -26,7 +26,8 @@ class TaskContext:
 
         # call
         try:
-            return next(generator)
+            with tracer().trace_call(self.generatorfunction, *args, **kwargs):
+                return next(generator)
         except StopIteration as stop:
             self.reset()
             return stop.value
@@ -34,10 +35,16 @@ class TaskContext:
             self.reset()
             raise
 
+def traced(f):
+    def wrapper(*args, **kwargs):
+        with tracer().trace_call(f, *args, **kwargs):
+            return f(*args, **kwargs)
+    return wrapper
+
 @optional_arg_decorator
 def task(f, reset_after_inactivity=False):
     if isgeneratorfunction(f):
         return TaskContext(f, reset_after_inactivity)
     else:
         assert isfunction(f)
-        return f
+        return traced(f)

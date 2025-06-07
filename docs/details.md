@@ -110,6 +110,29 @@ context().reset_inactive_states() # frame
 counter1() == 0 # was inactive in last frame
 ```
 
+### tracer
+
+```python
+>>> from bscript import task, tracer
+>>>
+>>> @task
+... def foo(x, y):
+...     pass
+...
+... @task
+... def bar(z):
+...     foo(z*2, z*3)
+...
+... bar(5)
+... print(tracer())
+...
+|--call-tree
+    |--bar(z=5)
+        |--foo(x=10, y=15)
+```
+
+use `tracer().reset()` to reset the tracer (for the next frame).
+
 
 ### while & yield
 

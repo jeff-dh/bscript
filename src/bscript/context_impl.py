@@ -1,5 +1,6 @@
 from typing import Any, Generator
 from .utils import get_var_from_parent_frames
+from .tracer import Tracer
 
 class bScriptContext:
     def __init__(self):
@@ -9,6 +10,7 @@ class bScriptContext:
         self.output: Any = None
         self._active_states = set()
         self._last_active_states = set()
+        self.tracer = Tracer()
 
     def execute(_bscript_context_magic, f, *args, **kwargs):
         return f(*args, **kwargs)
@@ -47,3 +49,4 @@ def context():
 def bb(): return context().bb
 def input(): return context().input
 def output(): return context().output
+def tracer(): return context().tracer
